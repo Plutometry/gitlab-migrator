@@ -3,6 +3,10 @@ import subprocess
 import sys
 import time
 import requests
+import urllib3
+
+# Disable SSL warnings for self-signed certificates
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 GITLAB_URL = os.environ.get("GITLAB_URL", "").rstrip("/")
 GITLAB_TOKEN = os.environ.get("GITLAB_TOKEN")
@@ -28,7 +32,7 @@ def run(cmd, cwd=None):
 def gitlab_get(path, params=None):
     headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
     url = f"{GITLAB_URL}/api/v4{path}"
-    r = requests.get(url, headers=headers, params=params or {})
+    r = requests.get(url, headers=headers, params=params or {}, verify=False)
     r.raise_for_status()
     return r
 
